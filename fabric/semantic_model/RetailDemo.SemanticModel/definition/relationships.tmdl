@@ -1,0 +1,23 @@
+/// Star schema relationships.
+/// All relationships are many-to-one from FactSales (many side)
+/// to each dimension (one side). Cross-filter direction is single
+/// (dim → fact) which is correct for a star schema — bidirectional
+/// cross-filtering is not used here to avoid ambiguity.
+
+relationship FactSales_DimCustomer
+	fromColumn: FactSales.CustomerSK
+	toColumn: DimCustomer.CustomerSK
+
+relationship FactSales_DimProduct
+	fromColumn: FactSales.ProductSK
+	toColumn: DimProduct.ProductSK
+
+relationship FactSales_DimStore
+	fromColumn: FactSales.StoreSK
+	toColumn: DimStore.StoreSK
+
+/// Date relationship: FactSales.OrderDateKey (INT) → DimDate.DateKey (INT).
+/// Both columns are YYYYMMDD integers — no type conversion needed in the join.
+relationship FactSales_DimDate
+	fromColumn: FactSales.OrderDateKey
+	toColumn: DimDate.DateKey

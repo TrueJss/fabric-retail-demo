@@ -1,0 +1,9 @@
+# Linting
+sqlfluff==3.1.0
+nbqa==1.8.7
+flake8==7.1.1
+
+# Mock data generation
+faker==26.0.0
+pandas==2.2.2
+openpyxl==3.1.5

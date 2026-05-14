@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "RetailDemo",
+    "description": "Import-mode semantic model for the Retail Demo project. Connects to gold.vw_* views in the Fabric Warehouse. Star schema with dynamic RLS on DimCustomer.Region."
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "REPLACE_WITH_MODEL_GUID"
+  }
+}

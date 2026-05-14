@@ -1,0 +1,24 @@
+/// Model-level settings for the RetailDemo semantic model.
+/// Import mode: data is cached in the Power BI service.
+/// Scheduled refresh must be configured in the Power BI service after publishing.
+
+createOrReplace
+
+	Model
+		culture: en-US
+		defaultPowerBIDataSourceVersion: powerBI_V3
+
+		/// Single data source pointing to the Fabric Warehouse SQL endpoint.
+		/// Replace WAREHOUSE_SQL_ENDPOINT with the value from:
+		/// Fabric workspace → RetailDemo_Warehouse → Settings → SQL connection string → Server
+		DataSource retaildemo_warehouse
+			type: structured
+			connectionDetails
+				protocol: tds
+				address
+					server: WAREHOUSE_SQL_ENDPOINT
+					database: RetailDemo_Warehouse
+			credential
+				AuthenticationKind: OAuth2
+				kind: OAuth2
+				path: WAREHOUSE_SQL_ENDPOINT

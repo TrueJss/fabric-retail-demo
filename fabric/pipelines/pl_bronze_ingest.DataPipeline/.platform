@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "DataPipeline",
+    "displayName": "pl_bronze_ingest",
+    "description": "Ingests raw source files from Lakehouse /Files/raw_upload/ into the Bronze layer at /Files/bronze/. All five copy activities run in parallel. Triggered manually or on a schedule before the Silver notebooks."
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "REPLACE_WITH_PIPELINE_GUID"
+  }
+}

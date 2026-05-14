@@ -1,0 +1,44 @@
+[sqlfluff]
+dialect = tsql
+templater = raw
+max_line_length = 120
+indent_unit = space
+tab_space_size = 4
+# CP02: disabled — PascalCase identifiers (CustomerSK, DateKey, etc.) are the
+#        project naming convention for Fabric Warehouse objects.
+# LT01: disabled — aligned column definitions in CREATE TABLE are intentional
+#        DDL style (easier to read, standard in SQL Server shops).
+exclude_rules = capitalisation.identifiers, layout.spacing, aliasing.self_alias.column, convention.casting_style
+# aliasing.self_alias.column: excluded because Silver columns are lowercase (e.g. region)
+#   and Gold columns are PascalCase (e.g. Region). The alias IS intentional — it
+#   documents the mapping explicitly and is not redundant despite the case match.
+# convention.casting_style: excluded because T-SQL CONVERT(INT, ..., 112) for
+#   YYYYMMDD date keys has no CAST() equivalent — mixing is unavoidable here.
+
+[sqlfluff:indentation]
+indent_unit = space
+tab_space_size = 4
+
+[sqlfluff:rules:capitalisation.keywords]
+# SQL keywords must be uppercase: SELECT, FROM, WHERE, etc.
+capitalisation_policy = upper
+
+[sqlfluff:rules:capitalisation.functions]
+# Built-in functions uppercase: COUNT(), SUM(), ISNULL(), etc.
+capitalisation_policy = upper
+
+[sqlfluff:rules:capitalisation.types]
+# Data types uppercase: INT, VARCHAR, DECIMAL, etc.
+capitalisation_policy = upper
+
+[sqlfluff:rules:layout.long_lines]
+ignore_comment_lines = true
+ignore_comment_clauses = true
+
+[sqlfluff:rules:aliasing.table]
+# Require explicit AS keyword for table aliases
+aliasing = explicit
+
+[sqlfluff:rules:aliasing.column]
+# Require explicit AS keyword for column aliases
+aliasing = explicit

@@ -1,0 +1,98 @@
+/// DimDate — calendar dimension.
+/// Marked as the model date table — required for DAX time intelligence
+/// functions (DATESYTD, DATEADD, etc.) to work correctly.
+/// FullDate is the date column Power BI uses to resolve the date context.
+
+table DimDate
+
+	partition DimDate = m
+		mode: import
+		source =
+			let
+				Source   = Sql.Database("WAREHOUSE_SQL_ENDPOINT", "RetailDemo_Warehouse"),
+				goldView = Source{[Schema = "gold", Item = "vw_DimDate"]}[Data]
+			in
+				goldView
+
+	/// Integer surrogate key (YYYYMMDD). Joins to FactSales.OrderDateKey.
+	column DateKey
+		dataType: int64
+		isHidden: true
+		sourceColumn: DateKey
+
+	/// The date column — marked as the date table key for time intelligence.
+	column FullDate
+		dataType: dateTime
+		sourceColumn: FullDate
+		formatString: Short Date
+		isKey: true
+
+	column DayOfWeek
+		dataType: int64
+		isHidden: true
+		sourceColumn: DayOfWeek
+
+	column DayName
+		dataType: string
+		sourceColumn: DayName
+
+	column DayOfMonth
+		dataType: int64
+		sourceColumn: DayOfMonth
+
+	column DayOfYear
+		dataType: int64
+		isHidden: true
+		sourceColumn: DayOfYear
+
+	column WeekOfYear
+		dataType: int64
+		sourceColumn: WeekOfYear
+
+	column MonthNumber
+		dataType: int64
+		isHidden: true
+		sourceColumn: MonthNumber
+
+	column MonthName
+		dataType: string
+		sourceColumn: MonthName
+		sortByColumn: MonthNumber
+
+	column MonthShort
+		dataType: string
+		sourceColumn: MonthShort
+		sortByColumn: MonthNumber
+
+	column Quarter
+		dataType: int64
+		isHidden: true
+		sourceColumn: Quarter
+
+	column QuarterName
+		dataType: string
+		sourceColumn: QuarterName
+		sortByColumn: Quarter
+
+	column YearNumber
+		dataType: int64
+		sourceColumn: YearNumber
+
+	column IsWeekend
+		dataType: boolean
+		sourceColumn: IsWeekend
+
+	/// Date hierarchy used in all time-series visuals.
+	hierarchy 'Date Hierarchy'
+		level Year
+			column: YearNumber
+		level Quarter
+			column: QuarterName
+		level Month
+			column: MonthName
+		level Day
+			column: FullDate
+
+	/// Marks this table as the model date table for DAX time intelligence.
+	annotation PBI_Id = DimDate
+	dataCategory: Time

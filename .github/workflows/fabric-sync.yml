@@ -1,0 +1,62 @@
+name: Deploy to production
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  fabric-sync:
+    name: Sync Fabric workspace (prod)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Sync workspace from main branch
+        env:
+          FABRIC_TENANT_ID: ${{ secrets.FABRIC_TENANT_ID }}
+          FABRIC_CLIENT_ID: ${{ secrets.FABRIC_CLIENT_ID }}
+          FABRIC_CLIENT_SECRET: ${{ secrets.FABRIC_CLIENT_SECRET }}
+          FABRIC_WORKSPACE_ID: ${{ secrets.FABRIC_WORKSPACE_ID_PROD }}
+        run: |
+          # Acquire Azure AD token for Fabric REST API
+          TOKEN=$(curl -s -X POST \
+            "https://login.microsoftonline.com/${FABRIC_TENANT_ID}/oauth2/v2.0/token" \
+            -d "grant_type=client_credentials" \
+            -d "client_id=${FABRIC_CLIENT_ID}" \
+            -d "client_secret=${FABRIC_CLIENT_SECRET}" \
+            -d "scope=https://api.fabric.microsoft.com/.default" \
+            | python3 -c "import sys,json; print(json.load(sys.stdin)['access_token'])")
+
+          # Trigger Git sync on the production workspace
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+            "https://api.fabric.microsoft.com/v1/workspaces/${FABRIC_WORKSPACE_ID}/git/updateFromGit" \
+            -H "Authorization: Bearer ${TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "workspaceHead": null,
+              "remoteCommitHash": null,
+              "conflictResolution": {
+                "conflictResolutionType": "Workspace",
+                "conflictResolutionPolicy": "PreferRemote"
+              },
+              "options": {
+                "allowOverrideItems": true
+              }
+            }')
+
+          echo "Fabric API response: ${HTTP_STATUS}"
+          if [ "${HTTP_STATUS}" != "200" ] && [ "${HTTP_STATUS}" != "202" ]; then
+            echo "Fabric sync failed with HTTP ${HTTP_STATUS}"
+            exit 1
+          fi
+
+          echo "Production workspace synced successfully."
+
+      # Note: add the following secrets to your GitHub repo before using this workflow:
+      #   FABRIC_TENANT_ID       – your Azure AD tenant ID
+      #   FABRIC_CLIENT_ID       – service principal client ID (with Fabric workspace access)
+      #   FABRIC_CLIENT_SECRET   – service principal secret
+      #   FABRIC_WORKSPACE_ID_PROD – production Fabric workspace GUID

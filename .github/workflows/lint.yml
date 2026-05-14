@@ -1,0 +1,57 @@
+name: Lint
+
+on:
+  pull_request:
+    branches:
+      - main
+      - dev
+
+jobs:
+  sql-lint:
+    name: SQL lint (SQLFluff)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install sqlfluff==3.1.0
+
+      - name: Run SQLFluff lint
+        run: |
+          sqlfluff lint \
+            fabric/warehouse/ddl/ \
+            fabric/warehouse/stored_procs/ \
+            --dialect tsql \
+            --format github-annotation \
+            --annotation-level warning
+
+  notebook-lint:
+    name: Notebook lint (nbqa + flake8)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install nbqa==1.8.7 flake8==7.1.1
+
+      - name: Run nbqa flake8 on notebooks
+        run: |
+          nbqa flake8 fabric/notebooks/ \
+            --max-line-length 120 \
+            --extend-ignore E203,W503
