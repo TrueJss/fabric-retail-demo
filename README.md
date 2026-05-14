@@ -7,7 +7,7 @@ End-to-end data engineering solution built on **Microsoft Fabric** — medallion
 architecture (Bronze → Silver → Gold), a T-SQL star schema in Fabric Warehouse,
 and a Power BI report with dynamic Row-Level Security.
 
----
+--------
 
 ## Architecture
 
