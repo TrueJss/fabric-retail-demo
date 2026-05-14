@@ -1,7 +1,7 @@
 # Microsoft Fabric – Retail Demo
 
-![Lint](https://github.com/YOUR_USERNAME/fabric-retail-demo/actions/workflows/lint.yml/badge.svg)
-![Deploy](https://github.com/YOUR_USERNAME/fabric-retail-demo/actions/workflows/fabric-sync.yml/badge.svg)
+![Lint](https://github.com/TrueJss/fabric-retail-demo/actions/workflows/lint.yml/badge.svg)
+![Deploy](https://github.com/TrueJss/fabric-retail-demo/actions/workflows/fabric-sync.yml/badge.svg)
 
 End-to-end data engineering solution built on **Microsoft Fabric** — medallion
 architecture (Bronze → Silver → Gold), a T-SQL star schema in Fabric Warehouse,
