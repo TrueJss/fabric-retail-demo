@@ -8,7 +8,7 @@ table UserRegionMapping
 		mode: import
 		source =
 			let
-				Source   = Sql.Database("WAREHOUSE_SQL_ENDPOINT", "RetailDemo_Warehouse"),
+				Source   = Sql.Database("tuksaiygj4tunec3lfrsezppjq-zfib4t7w77nenbblx7lm22uyai.datawarehouse.fabric.microsoft.com", "RetailDemo_Warehouse"),
 				goldView = Source{[Schema = "gold", Item = "vw_UserRegionMapping"]}[Data]
 			in
 				goldView

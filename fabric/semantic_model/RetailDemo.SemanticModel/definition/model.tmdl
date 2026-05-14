@@ -16,7 +16,7 @@ createOrReplace
 			connectionDetails
 				protocol: tds
 				address
-					server: WAREHOUSE_SQL_ENDPOINT
+					server: tuksaiygj4tunec3lfrsezppjq-zfib4t7w77nenbblx7lm22uyai.datawarehouse.fabric.microsoft.com
 					database: RetailDemo_Warehouse
 			credential
 				AuthenticationKind: OAuth2
