@@ -3,8 +3,14 @@ max-line-length = 120
 
 # E203: whitespace before ':' (conflicts with black-style slice formatting)
 # W503: line break before binary operator (PEP8 updated guidance)
-# E501: line too long (handled by max-line-length above)
-extend-ignore = E203, W503
+# E221: multiple spaces before operator — aligned variable assignments in
+#       notebook config cells are intentional for readability (BRONZE_PATH,
+#       SILVER_TABLE, LOAD_TS kept vertically aligned).
+extend-ignore = E203, W503, E221
+
+# Fabric/Spark runtime globals injected by the notebook environment.
+# Declaring them here prevents F821 (undefined name) on spark, mssparkutils etc.
+builtins = spark, sc, sqlContext, mssparkutils, notebookutils
 
 exclude =
     .git,
