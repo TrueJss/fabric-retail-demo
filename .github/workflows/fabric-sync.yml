@@ -5,96 +5,69 @@ on:
     branches:
       - main
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Fabric Git sync via service principal has a known limitation:
+# the calling identity must have GitHub OAuth credentials configured in Fabric,
+# which service principals cannot provide through the standard OAuth flow.
+#
+# This workflow therefore validates that the merge reached main and that
+# the Fabric API token can be acquired successfully, then posts a reminder
+# to trigger the workspace sync manually from the Fabric UI.
+#
+# Manual sync (takes ~10 seconds):
+#   Fabric workspace → Source control (top-right branch icon) → Update all
+#
+# For a fully automated alternative, replace this workflow with Fabric
+# Deployment Pipelines: create a dev → prod pipeline in the Fabric UI,
+# then call POST /v1/deploymentPipelines/{id}/deploy from GitHub Actions.
+# That API does not require Git credentials.
+# ─────────────────────────────────────────────────────────────────────────────
+
 jobs:
-  fabric-sync:
-    name: Sync Fabric workspace (prod)
+  notify-deploy:
+    name: Validate token + remind to sync Fabric workspace
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Acquire Fabric API token
-        id: token
+      - name: Validate Fabric API token
         run: |
-          TOKEN=$(curl -s -X POST \
+          RESPONSE=$(curl -s -X POST \
             "https://login.microsoftonline.com/${FABRIC_TENANT_ID}/oauth2/v2.0/token" \
             -d "grant_type=client_credentials" \
             -d "client_id=${FABRIC_CLIENT_ID}" \
             -d "client_secret=${FABRIC_CLIENT_SECRET}" \
-            -d "scope=https://api.fabric.microsoft.com/.default" \
-            | python3 -c "import sys,json; print(json.load(sys.stdin)['access_token'])")
+            -d "scope=https://api.fabric.microsoft.com/.default")
+
+          TOKEN=$(echo "$RESPONSE" | python3 -c \
+            "import sys,json; d=json.load(sys.stdin); print(d.get('access_token',''))")
 
           if [ -z "$TOKEN" ]; then
-            echo "Failed to acquire token — check FABRIC_CLIENT_ID and FABRIC_CLIENT_SECRET secrets"
+            echo "ERROR: could not acquire Fabric API token."
+            echo "Check that FABRIC_TENANT_ID, FABRIC_CLIENT_ID and FABRIC_CLIENT_SECRET secrets are correct."
+            echo "Response: $RESPONSE"
             exit 1
           fi
 
-          echo "TOKEN=$TOKEN" >> $GITHUB_ENV
-          echo "Token acquired."
+          echo "Fabric API token acquired successfully."
+          echo "Service principal is correctly configured."
         env:
           FABRIC_TENANT_ID: ${{ secrets.FABRIC_TENANT_ID }}
           FABRIC_CLIENT_ID: ${{ secrets.FABRIC_CLIENT_ID }}
           FABRIC_CLIENT_SECRET: ${{ secrets.FABRIC_CLIENT_SECRET }}
 
-      - name: Get current Git status from workspace
+      - name: Print sync reminder
         run: |
-          # updateFromGit requires the actual workspaceHead and remoteCommitHash.
-          # Passing null for either field causes a 400 Bad Request — fetch them first.
-          STATUS=$(curl -s -X GET \
-            "https://api.fabric.microsoft.com/v1/workspaces/${FABRIC_WORKSPACE_ID}/git/status" \
-            -H "Authorization: Bearer ${TOKEN}" \
-            -H "Content-Type: application/json")
-
-          echo "Git status response: $STATUS"
-
-          WORKSPACE_HEAD=$(echo "$STATUS" | python3 -c \
-            "import sys,json; d=json.load(sys.stdin); print(d.get('workspaceHead',''))")
-          REMOTE_COMMIT=$(echo "$STATUS" | python3 -c \
-            "import sys,json; d=json.load(sys.stdin); print(d.get('remoteCommitHash',''))")
-
-          if [ -z "$WORKSPACE_HEAD" ] || [ -z "$REMOTE_COMMIT" ]; then
-            echo ""
-            echo "ERROR: could not read workspaceHead or remoteCommitHash."
-            echo "Most likely cause: the prod Fabric workspace is not connected to Git yet."
-            echo "Fix: Fabric workspace → Settings → Git integration → connect to this repo on the main branch, then re-run this workflow."
-            exit 1
-          fi
-
-          echo "workspaceHead   : $WORKSPACE_HEAD"
-          echo "remoteCommitHash: $REMOTE_COMMIT"
-
-          echo "WORKSPACE_HEAD=$WORKSPACE_HEAD" >> $GITHUB_ENV
-          echo "REMOTE_COMMIT=$REMOTE_COMMIT" >> $GITHUB_ENV
-        env:
-          FABRIC_WORKSPACE_ID: ${{ secrets.FABRIC_WORKSPACE_ID_PROD }}
-
-      - name: Sync workspace from main branch
-        run: |
-          HTTP_STATUS=$(curl -s -o /tmp/fabric_response.json -w "%{http_code}" -X POST \
-            "https://api.fabric.microsoft.com/v1/workspaces/${FABRIC_WORKSPACE_ID}/git/updateFromGit" \
-            -H "Authorization: Bearer ${TOKEN}" \
-            -H "Content-Type: application/json" \
-            -d "{
-              \"workspaceHead\": \"${WORKSPACE_HEAD}\",
-              \"remoteCommitHash\": \"${REMOTE_COMMIT}\",
-              \"conflictResolution\": {
-                \"conflictResolutionType\": \"Workspace\",
-                \"conflictResolutionPolicy\": \"PreferRemote\"
-              },
-              \"options\": {
-                \"allowOverrideItems\": true
-              }
-            }")
-
-          echo "Fabric API response: $HTTP_STATUS"
-          cat /tmp/fabric_response.json
-
-          if [ "$HTTP_STATUS" != "200" ] && [ "$HTTP_STATUS" != "202" ]; then
-            echo "Fabric sync failed with HTTP $HTTP_STATUS — see response body above."
-            exit 1
-          fi
-
-          echo "Production workspace synced successfully."
-        env:
-          FABRIC_WORKSPACE_ID: ${{ secrets.FABRIC_WORKSPACE_ID_PROD }}
+          echo ""
+          echo "══════════════════════════════════════════════════════"
+          echo "  Merge to main succeeded. API credentials are valid."
+          echo ""
+          echo "  ACTION REQUIRED — sync the Fabric prod workspace:"
+          echo "  1. Open your Fabric prod workspace"
+          echo "  2. Click the Source control button (branch icon, top right)"
+          echo "  3. Click Update all"
+          echo ""
+          echo "  This pulls the latest main branch into the workspace."
+          echo "══════════════════════════════════════════════════════"
