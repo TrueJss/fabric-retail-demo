@@ -6,7 +6,7 @@ table DimStore
 		mode: import
 		source =
 			let
-				Source   = Sql.Database("tuksaiygj4tunec3lfrsezppjq-zfib4t7w77nenbblx7lm22uyai.datawarehouse.fabric.microsoft.com", "RetailDemo_Warehouse"),
+				Source   = Sql.Database("tuksaiygj4tunec3lfrsezppjq-7bwxheoawaye5kumzfsofchjf4.datawarehouse.fabric.microsoft.com", "RetailDemo_Warehouse"),
 				goldView = Source{[Schema = "gold", Item = "vw_DimStore"]}[Data]
 			in
 				goldView
