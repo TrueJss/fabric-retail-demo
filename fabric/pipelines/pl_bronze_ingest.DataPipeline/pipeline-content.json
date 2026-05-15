@@ -73,7 +73,7 @@
             "referenceName": "ds_lakehouse_binary",
             "type": "DatasetReference",
             "parameters": {
-              "lakehouse_id": "LAKEHOUSE_ID",
+              "lakehouse_id": "31e591ee-c81f-49f8-9c1e-f8410811538a",
               "file_path": "raw_upload/orders.csv"
             }
           }
@@ -83,7 +83,7 @@
             "referenceName": "ds_lakehouse_binary",
             "type": "DatasetReference",
             "parameters": {
-              "lakehouse_id": "LAKEHOUSE_ID",
+              "lakehouse_id": "31e591ee-c81f-49f8-9c1e-f8410811538a",
               "file_path": {
                 "value": "@concat('bronze/orders/', variables('v_load_date'), '/orders.csv')",
                 "type": "Expression"
@@ -136,7 +136,7 @@
             "referenceName": "ds_lakehouse_binary",
             "type": "DatasetReference",
             "parameters": {
-              "lakehouse_id": "LAKEHOUSE_ID",
+              "lakehouse_id": "31e591ee-c81f-49f8-9c1e-f8410811538a",
               "file_path": "raw_upload/stores.csv"
             }
           }
@@ -146,7 +146,7 @@
             "referenceName": "ds_lakehouse_binary",
             "type": "DatasetReference",
             "parameters": {
-              "lakehouse_id": "LAKEHOUSE_ID",
+              "lakehouse_id": "31e591ee-c81f-49f8-9c1e-f8410811538a",
               "file_path": {
                 "value": "@concat('bronze/stores/', variables('v_load_date'), '/stores.csv')",
                 "type": "Expression"
@@ -199,7 +199,7 @@
             "referenceName": "ds_lakehouse_binary",
             "type": "DatasetReference",
             "parameters": {
-              "lakehouse_id": "LAKEHOUSE_ID",
+              "lakehouse_id": "31e591ee-c81f-49f8-9c1e-f8410811538a",
               "file_path": "raw_upload/products.xlsx"
             }
           }
@@ -209,7 +209,7 @@
             "referenceName": "ds_lakehouse_binary",
             "type": "DatasetReference",
             "parameters": {
-              "lakehouse_id": "LAKEHOUSE_ID",
+              "lakehouse_id": "31e591ee-c81f-49f8-9c1e-f8410811538a",
               "file_path": {
                 "value": "@concat('bronze/products/', variables('v_load_date'), '/products.xlsx')",
                 "type": "Expression"
@@ -262,7 +262,7 @@
             "referenceName": "ds_lakehouse_binary",
             "type": "DatasetReference",
             "parameters": {
-              "lakehouse_id": "LAKEHOUSE_ID",
+              "lakehouse_id": "31e591ee-c81f-49f8-9c1e-f8410811538a",
               "file_path": "raw_upload/customers.json"
             }
           }
@@ -272,7 +272,7 @@
             "referenceName": "ds_lakehouse_binary",
             "type": "DatasetReference",
             "parameters": {
-              "lakehouse_id": "LAKEHOUSE_ID",
+              "lakehouse_id": "31e591ee-c81f-49f8-9c1e-f8410811538a",
               "file_path": {
                 "value": "@concat('bronze/customers/', variables('v_load_date'), '/customers.json')",
                 "type": "Expression"
@@ -325,7 +325,7 @@
             "referenceName": "ds_lakehouse_binary",
             "type": "DatasetReference",
             "parameters": {
-              "lakehouse_id": "LAKEHOUSE_ID",
+              "lakehouse_id": "31e591ee-c81f-49f8-9c1e-f8410811538a",
               "file_path": "raw_upload/returns.json"
             }
           }
@@ -335,7 +335,7 @@
             "referenceName": "ds_lakehouse_binary",
             "type": "DatasetReference",
             "parameters": {
-              "lakehouse_id": "LAKEHOUSE_ID",
+              "lakehouse_id": "31e591ee-c81f-49f8-9c1e-f8410811538a",
               "file_path": {
                 "value": "@concat('bronze/returns/', variables('v_load_date'), '/returns.json')",
                 "type": "Expression"

@@ -41,8 +41,8 @@
           "secureInput": false
         },
         "typeProperties": {
-          "notebookId": "NB_SILVER_ORDERS_ID",
-          "workspaceId": "WORKSPACE_ID",
+          "notebookId": "68c2adcb-0111-476d-a475-6adbd0aeea82",
+          "workspaceId": "91736df8-b0c0-4e30-aa8c-c964e288e92f",
           "parameters": {}
         }
       },
@@ -65,8 +65,8 @@
           "secureInput": false
         },
         "typeProperties": {
-          "notebookId": "NB_SILVER_STORES_ID",
-          "workspaceId": "WORKSPACE_ID",
+          "notebookId": "6933c3b6-b9db-4123-82a1-5d396baf5b50",
+          "workspaceId": "91736df8-b0c0-4e30-aa8c-c964e288e92f",
           "parameters": {}
         }
       },
@@ -89,8 +89,8 @@
           "secureInput": false
         },
         "typeProperties": {
-          "notebookId": "NB_SILVER_PRODUCTS_ID",
-          "workspaceId": "WORKSPACE_ID",
+          "notebookId": "fc68cef0-0af4-4023-a0b7-572f1c3934b6",
+          "workspaceId": "91736df8-b0c0-4e30-aa8c-c964e288e92f",
           "parameters": {}
         }
       },
@@ -113,8 +113,8 @@
           "secureInput": false
         },
         "typeProperties": {
-          "notebookId": "NB_SILVER_CUSTOMERS_ID",
-          "workspaceId": "WORKSPACE_ID",
+          "notebookId": "6038f1bd-6fb1-464e-b405-35906dae8c56",
+          "workspaceId": "91736df8-b0c0-4e30-aa8c-c964e288e92f",
           "parameters": {}
         }
       },
@@ -137,8 +137,8 @@
           "secureInput": false
         },
         "typeProperties": {
-          "notebookId": "NB_SILVER_RETURNS_ID",
-          "workspaceId": "WORKSPACE_ID",
+          "notebookId": "2a0abb78-97d3-4617-898f-b12eca1b754a",
+          "workspaceId": "91736df8-b0c0-4e30-aa8c-c964e288e92f",
           "parameters": {}
         }
       },
@@ -176,7 +176,7 @@
           "storedProcedureName": "gold.usp_Load_DimCustomer"
         },
         "linkedServiceName": {
-          "referenceName": "RetailDemo_Warehouse",
+          "referenceName": "5745b65d-7345-433c-ada0-4d9c6f1f6554",
           "type": "LinkedServiceReference"
         }
       },
@@ -214,7 +214,7 @@
           "storedProcedureName": "gold.usp_Load_DimProduct"
         },
         "linkedServiceName": {
-          "referenceName": "RetailDemo_Warehouse",
+          "referenceName": "5745b65d-7345-433c-ada0-4d9c6f1f6554",
           "type": "LinkedServiceReference"
         }
       },
@@ -252,7 +252,7 @@
           "storedProcedureName": "gold.usp_Load_DimStore"
         },
         "linkedServiceName": {
-          "referenceName": "RetailDemo_Warehouse",
+          "referenceName": "5745b65d-7345-433c-ada0-4d9c6f1f6554",
           "type": "LinkedServiceReference"
         }
       },
@@ -286,7 +286,7 @@
           "storedProcedureName": "gold.usp_Load_FactSales"
         },
         "linkedServiceName": {
-          "referenceName": "RetailDemo_Warehouse",
+          "referenceName": "5745b65d-7345-433c-ada0-4d9c6f1f6554",
           "type": "LinkedServiceReference"
         }
       }
