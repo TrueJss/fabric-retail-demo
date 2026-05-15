@@ -3,10 +3,10 @@
   "metadata": {
     "type": "DataPipeline",
     "displayName": "pl_master_load",
-    "description": "End-to-end orchestration pipeline. Runs Bronze ingestion, Silver notebooks, and Gold stored procedures in dependency order. This is the single entry point for a full data refresh."
+    "description": "End-to-end orchestration pipeline. Runs Bronze ingestion, Silver notebooks, and Gold stored procedures in dependency order."
   },
   "config": {
     "version": "2.0",
-    "logicalId": "REPLACE_WITH_PIPELINE_GUID"
+    "logicalId": "70136181-26ea-477c-8d1e-7f59d740de17"
   }
 }
