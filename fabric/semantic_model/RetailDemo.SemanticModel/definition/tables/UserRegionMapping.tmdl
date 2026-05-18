@@ -1,0 +1,27 @@
+/// UserRegionMapping — RLS mapping table.
+/// Not exposed to report users — consumed only by the RLS role DAX filter.
+/// Hidden from the field list in Power BI Desktop.
+
+table UserRegionMapping
+
+	partition UserRegionMapping = m
+		mode: import
+		source =
+			let
+				Source   = Sql.Database("WAREHOUSE_SQL_ENDPOINT", "RetailDemo_Warehouse"),
+				goldView = Source{[Schema = "gold", Item = "vw_UserRegionMapping"]}[Data]
+			in
+				goldView
+
+	column UserEmail
+		dataType: string
+		sourceColumn: UserEmail
+		isHidden: true
+
+	column Region
+		dataType: string
+		sourceColumn: Region
+		isHidden: true
+
+	/// Hide entire table from report authors — it is infrastructure, not data.
+	isHidden: true

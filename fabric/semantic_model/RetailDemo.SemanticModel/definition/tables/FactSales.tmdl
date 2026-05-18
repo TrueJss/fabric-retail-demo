@@ -1,0 +1,169 @@
+/// FactSales — central fact table.
+/// Connects to gold.vw_FactSales in the Fabric Warehouse.
+/// All DAX measures are defined here (measures logically belong on the fact table).
+
+table FactSales
+
+	/// Power Query M — reads from the Gold semantic-layer view.
+	partition FactSales = m
+		mode: import
+		source =
+			let
+				Source   = Sql.Database("WAREHOUSE_SQL_ENDPOINT", "RetailDemo_Warehouse"),
+				goldView = Source{[Schema = "gold", Item = "vw_FactSales"]}[Data]
+			in
+				goldView
+
+	// ── Columns ──────────────────────────────────────────────────────────────
+
+	column OrderID
+		dataType: int64
+		isHidden: true
+		sourceColumn: OrderID
+
+	column CustomerSK
+		dataType: int64
+		isHidden: true
+		sourceColumn: CustomerSK
+
+	column ProductSK
+		dataType: int64
+		isHidden: true
+		sourceColumn: ProductSK
+
+	column StoreSK
+		dataType: int64
+		isHidden: true
+		sourceColumn: StoreSK
+
+	column OrderDateKey
+		dataType: int64
+		isHidden: true
+		sourceColumn: OrderDateKey
+
+	column Quantity
+		dataType: int64
+		sourceColumn: Quantity
+		summarizeBy: sum
+
+	column UnitPrice
+		dataType: decimal
+		sourceColumn: UnitPrice
+		formatString: "$#,##0.00"
+		summarizeBy: none
+
+	column TotalAmount
+		dataType: decimal
+		sourceColumn: TotalAmount
+		formatString: "$#,##0.00"
+		summarizeBy: sum
+
+	column OrderStatus
+		dataType: string
+		sourceColumn: OrderStatus
+
+	// ── Measures ─────────────────────────────────────────────────────────────
+
+	/// Sum of TotalAmount across all orders in the filter context.
+	measure 'Total Revenue' =
+			SUM(FactSales[TotalAmount])
+		formatString: "$#,##0.00"
+		displayFolder: Revenue
+
+	/// Revenue from completed orders only — excludes pending and cancelled.
+	measure 'Completed Revenue' =
+			CALCULATE(
+				[Total Revenue],
+				FactSales[OrderStatus] = "completed"
+			)
+		formatString: "$#,##0.00"
+		displayFolder: Revenue
+
+	/// Count of distinct order IDs in the filter context.
+	measure 'Total Orders' =
+			DISTINCTCOUNT(FactSales[OrderID])
+		formatString: "#,##0"
+		displayFolder: Orders
+
+	/// Count of completed orders only.
+	measure 'Completed Orders' =
+			CALCULATE(
+				[Total Orders],
+				FactSales[OrderStatus] = "completed"
+			)
+		formatString: "#,##0"
+		displayFolder: Orders
+
+	/// Percentage of orders that reached completed status.
+	measure 'Completion Rate %' =
+			DIVIDE(
+				[Completed Orders],
+				[Total Orders],
+				0
+			)
+		formatString: "0.0%"
+		displayFolder: Orders
+
+	/// Total units sold across all order lines.
+	measure 'Units Sold' =
+			SUM(FactSales[Quantity])
+		formatString: "#,##0"
+		displayFolder: Orders
+
+	/// Average revenue per order.
+	measure 'Avg Order Value' =
+			DIVIDE(
+				[Total Revenue],
+				[Total Orders],
+				0
+			)
+		formatString: "$#,##0.00"
+		displayFolder: Revenue
+
+	/// Year-to-date revenue using DimDate as the date table.
+	measure 'YTD Revenue' =
+			CALCULATE(
+				[Total Revenue],
+				DATESYTD(DimDate[FullDate])
+			)
+		formatString: "$#,##0.00"
+		displayFolder: Time Intelligence
+
+	/// Revenue in the same period one year ago.
+	measure 'Revenue PY' =
+			CALCULATE(
+				[Total Revenue],
+				DATEADD(DimDate[FullDate], -1, YEAR)
+			)
+		formatString: "$#,##0.00"
+		displayFolder: Time Intelligence
+
+	/// Year-over-year revenue growth percentage.
+	measure 'Revenue YoY %' =
+			VAR currentRevenue  = [Total Revenue]
+			VAR previousRevenue = [Revenue PY]
+			RETURN
+				DIVIDE(
+					currentRevenue - previousRevenue,
+					previousRevenue,
+					0
+				)
+		formatString: "+0.0%;-0.0%;0.0%"
+		displayFolder: Time Intelligence
+
+	/// Month-over-month revenue growth percentage.
+	measure 'Revenue MoM %' =
+			VAR currentRevenue  = [Total Revenue]
+			VAR previousRevenue =
+				CALCULATE(
+					[Total Revenue],
+					DATEADD(DimDate[FullDate], -1, MONTH)
+				)
+			RETURN
+				DIVIDE(
+					currentRevenue - previousRevenue,
+					previousRevenue,
+					0
+				)
+		formatString: "+0.0%;-0.0%;0.0%"
+		displayFolder: Time Intelligence
