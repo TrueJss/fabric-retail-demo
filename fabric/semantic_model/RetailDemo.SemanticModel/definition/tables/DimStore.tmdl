@@ -1,0 +1,47 @@
+/// DimStore — store dimension.
+
+table DimStore
+
+	partition DimStore = m
+		mode: import
+		source =
+			let
+				Source   = Sql.Database("WAREHOUSE_SQL_ENDPOINT", "RetailDemo_Warehouse"),
+				goldView = Source{[Schema = "gold", Item = "vw_DimStore"]}[Data]
+			in
+				goldView
+
+	column StoreSK
+		dataType: int64
+		isHidden: true
+		sourceColumn: StoreSK
+
+	column StoreID
+		dataType: int64
+		isHidden: true
+		sourceColumn: StoreID
+
+	column StoreName
+		dataType: string
+		sourceColumn: StoreName
+
+	column Region
+		dataType: string
+		sourceColumn: Region
+
+	column City
+		dataType: string
+		sourceColumn: City
+
+	column State
+		dataType: string
+		sourceColumn: State
+
+	column Manager
+		dataType: string
+		sourceColumn: Manager
+
+	column OpenDate
+		dataType: dateTime
+		sourceColumn: OpenDate
+		formatString: Short Date
