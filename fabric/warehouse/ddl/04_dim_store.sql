@@ -5,7 +5,7 @@
 -- =============================================================================
 
 CREATE TABLE gold.DimStore (
-    StoreSK         INT             NOT NULL    IDENTITY(1, 1),
+    StoreSK         BIGINT          NOT NULL    IDENTITY,
     StoreBK         INT             NOT NULL,
     StoreName       VARCHAR(100)    NOT NULL,
     Region          VARCHAR(50)     NOT NULL,
@@ -13,15 +13,5 @@ CREATE TABLE gold.DimStore (
     State           CHAR(2)         NULL,
     Manager         VARCHAR(100)    NULL,
     OpenDate        DATE            NULL,
-    _LoadTimestamp  DATETIME2       NOT NULL
+    _LoadTimestamp  DATETIME2(6)    NOT NULL
 );
-
-CREATE UNIQUE INDEX IX_DimStore_PK
-    ON gold.DimStore (StoreSK);
-
-CREATE UNIQUE INDEX IX_DimStore_BK
-    ON gold.DimStore (StoreBK);
-
-CREATE INDEX IX_DimStore_Region
-    ON gold.DimStore (Region)
-    INCLUDE (StoreSK, StoreName);
