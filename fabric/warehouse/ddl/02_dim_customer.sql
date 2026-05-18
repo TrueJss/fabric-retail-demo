@@ -1,11 +1,13 @@
 -- =============================================================================
 -- 02_dim_customer.sql
--- Note: PRIMARY KEY constraints are not supported inline in Fabric Warehouse
--- CREATE TABLE statements. Uniqueness enforced via CREATE UNIQUE INDEX.
+-- Fabric Warehouse limitations applied:
+--   - No inline PRIMARY KEY
+--   - IDENTITY with no seed/increment parameters
+--   - No CREATE INDEX
 -- =============================================================================
-
+ 
 CREATE TABLE gold.DimCustomer (
-    CustomerSK          INT             NOT NULL    IDENTITY(1, 1),
+    CustomerSK          BIGINT          NOT NULL    IDENTITY,
     CustomerBK          INT             NOT NULL,
     FirstName           VARCHAR(100)    NOT NULL,
     LastName            VARCHAR(100)    NOT NULL,
@@ -17,15 +19,5 @@ CREATE TABLE gold.DimCustomer (
     AddressState        CHAR(2)         NULL,
     Region              VARCHAR(50)     NOT NULL,
     RegistrationDate    DATE            NULL,
-    _LoadTimestamp      DATETIME2       NOT NULL
+    _LoadTimestamp      DATETIME2(6)       NOT NULL
 );
-
-CREATE UNIQUE INDEX IX_DimCustomer_PK
-    ON gold.DimCustomer (CustomerSK);
-
-CREATE UNIQUE INDEX IX_DimCustomer_BK
-    ON gold.DimCustomer (CustomerBK);
-
-CREATE INDEX IX_DimCustomer_Region
-    ON gold.DimCustomer (Region)
-    INCLUDE (CustomerSK);
