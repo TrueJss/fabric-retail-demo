@@ -42,6 +42,7 @@
 # CELL ********************
 
 import glob
+import os
 import pandas as pd
 from pyspark.sql import functions as F
 from pyspark.sql.types import IntegerType, DecimalType, DoubleType, TimestampType
@@ -70,8 +71,11 @@ LOAD_TS = datetime.now(timezone.utc)
 # CELL ********************
 
 local_base = "/lakehouse/default"
-xlsx_pattern = f"{local_base}/{BRONZE_PATH}/*/*/*/products.xlsx"
-xlsx_files = sorted(glob.glob(xlsx_pattern))
+xlsx_pattern = f"{local_base}/{BRONZE_PATH}/**/*.xlsx"
+xlsx_files = sorted([
+    f for f in glob.glob(xlsx_pattern, recursive=True)
+    if os.path.isfile(f)
+])
 
 if not xlsx_files:
     raise FileNotFoundError(f"No products.xlsx found under {BRONZE_PATH}")
