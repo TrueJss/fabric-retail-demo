@@ -1,21 +1,15 @@
 -- =============================================================================
 -- 07_populate_dim_date.sql
--- Populates gold.DimDate with one row per calendar day: 2023-01-01 → 2025-12-31.
--- Run once after 01_dim_date.sql. Re-runnable: TRUNCATE clears existing rows
--- before re-inserting, so safe to execute multiple times.
+-- Populates gold.DimDate with one row per calendar day: 2023-01-01 → 2025-12-31
+-- (1,096 rows).
 --
--- MAXRECURSION is set to 1100 (covers ~3 years of daily rows with headroom).
+-- Fabric Warehouse does not support recursive CTEs. The date spine is generated
+-- using a CROSS JOIN numbers approach: four VALUE sets multiplied together
+-- produce integers 0–1999, which are filtered down to the exact day range
+-- and added to the start date.
 -- =============================================================================
 
 TRUNCATE TABLE gold.DimDate;
-
-WITH DateCTE AS (
-    SELECT CAST('2023-01-01' AS DATE) AS FullDate
-    UNION ALL
-    SELECT DATEADD(DAY, 1, FullDate)
-    FROM DateCTE
-    WHERE FullDate < '2025-12-31'
-)
 
 INSERT INTO gold.DimDate (
     DateKey,
@@ -51,13 +45,26 @@ SELECT
         WHEN DATEPART(WEEKDAY, FullDate) IN (1, 7) THEN 1
         ELSE 0
     END AS IsWeekend
-FROM DateCTE
-OPTION (MAXRECURSION 1100);
+FROM (
+    SELECT
+        DATEADD(
+            DAY,
+            a.n + (b.n * 10) + (c.n * 100) + (d.n * 1000),
+            CAST('2023-01-01' AS DATE)
+        ) AS FullDate
+    FROM
+        (VALUES (0),(1),(2),(3),(4),(5),(6),(7),(8),(9)) AS a(n)
+    CROSS JOIN (VALUES (0),(1),(2),(3),(4),(5),(6),(7),(8),(9)) AS b(n)
+    CROSS JOIN (VALUES (0),(1),(2),(3),(4),(5),(6),(7),(8),(9)) AS c(n)
+    CROSS JOIN (VALUES (0),(1)) AS d(n)
+    WHERE
+        a.n + (b.n * 10) + (c.n * 100) + (d.n * 1000)
+        <= DATEDIFF(DAY, '2023-01-01', '2025-12-31')
+) AS dates;
 
--- Verify row count (expect 1096 rows for 2023-01-01 → 2025-12-31)
+-- Verify row count (expect 1096 rows)
 SELECT
-    COUNT(*)                        AS TotalDays,
-    MIN(FullDate)                   AS FirstDate,
-    MAX(FullDate)                   AS LastDate,
-    SUM(CAST(IsWeekend AS INT))     AS WeekendDays
+    COUNT(*) AS TotalDays,
+    MIN(FullDate) AS FirstDate,
+    MAX(FullDate) AS LastDate
 FROM gold.DimDate;
