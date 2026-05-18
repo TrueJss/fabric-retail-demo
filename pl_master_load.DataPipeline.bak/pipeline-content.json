@@ -1,0 +1,363 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "InvokePipeline",
+        "typeProperties": {
+          "parameters": {},
+          "waitOnCompletion": true,
+          "workspaceId": "00000000-0000-0000-0000-000000000000",
+          "pipelineId": "72d5d28a-2321-4793-b133-827f70a84c07",
+          "operationType": "InvokeFabricPipeline"
+        },
+        "externalReferences": {
+          "connection": "ab2b3e4a-4550-4a95-83f4-b0157be1b6de"
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "execute_bronze_pipeline",
+        "dependsOn": []
+      },
+      {
+        "type": "TridentNotebook",
+        "typeProperties": {
+          "notebookId": "d0aeea82-6adb-a475-476d-011168c2adcb",
+          "workspaceId": "00000000-0000-0000-0000-000000000000"
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "run_nb_silver_orders",
+        "dependsOn": [
+          {
+            "activity": "execute_bronze_pipeline",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "TridentNotebook",
+        "typeProperties": {
+          "notebookId": "6baf5b50-5d39-82a1-4123-b9db6933c3b6",
+          "workspaceId": "00000000-0000-0000-0000-000000000000"
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "run_nb_silver_stores",
+        "dependsOn": [
+          {
+            "activity": "execute_bronze_pipeline",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "TridentNotebook",
+        "typeProperties": {
+          "notebookId": "1c3934b6-572f-a0b7-4023-0af4fc68cef0",
+          "workspaceId": "00000000-0000-0000-0000-000000000000"
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "run_nb_silver_products",
+        "dependsOn": [
+          {
+            "activity": "execute_bronze_pipeline",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "TridentNotebook",
+        "typeProperties": {
+          "notebookId": "6dae8c56-3590-b405-464e-6fb16038f1bd",
+          "workspaceId": "00000000-0000-0000-0000-000000000000"
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "run_nb_silver_customers",
+        "dependsOn": [
+          {
+            "activity": "execute_bronze_pipeline",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "TridentNotebook",
+        "typeProperties": {
+          "notebookId": "ca1b754a-b12e-898f-4617-97d32a0abb78",
+          "workspaceId": "00000000-0000-0000-0000-000000000000"
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "run_nb_silver_returns",
+        "dependsOn": [
+          {
+            "activity": "run_nb_silver_orders",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "SqlServerStoredProcedure",
+        "typeProperties": {
+          "storedProcedureName": "gold.usp_Load_DimCustomer"
+        },
+        "linkedService": {
+          "name": "RetailDemo_Warehouse",
+          "properties": {
+            "type": "DataWarehouse",
+            "typeProperties": {
+              "artifactId": "6f1f6554-4d9c-ada0-433c-73455745b65d",
+              "endpoint": "tuksaiygj4tunec3lfrsezppjq-7bwxheoawaye5kumzfsofchjf4.datawarehouse.fabric.microsoft.com",
+              "workspaceId": "00000000-0000-0000-0000-000000000000"
+            },
+            "annotations": []
+          }
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "exec_usp_Load_DimCustomer",
+        "dependsOn": [
+          {
+            "activity": "run_nb_silver_returns",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          },
+          {
+            "activity": "run_nb_silver_orders",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          },
+          {
+            "activity": "run_nb_silver_stores",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          },
+          {
+            "activity": "run_nb_silver_products",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          },
+          {
+            "activity": "run_nb_silver_customers",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "SqlServerStoredProcedure",
+        "typeProperties": {
+          "storedProcedureName": "gold.usp_Load_DimProduct"
+        },
+        "linkedService": {
+          "name": "RetailDemo_Warehouse",
+          "properties": {
+            "type": "DataWarehouse",
+            "typeProperties": {
+              "artifactId": "6f1f6554-4d9c-ada0-433c-73455745b65d",
+              "endpoint": "tuksaiygj4tunec3lfrsezppjq-7bwxheoawaye5kumzfsofchjf4.datawarehouse.fabric.microsoft.com",
+              "workspaceId": "00000000-0000-0000-0000-000000000000"
+            },
+            "annotations": []
+          }
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "exec_usp_Load_DimProduct",
+        "dependsOn": [
+          {
+            "activity": "run_nb_silver_orders",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          },
+          {
+            "activity": "run_nb_silver_stores",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          },
+          {
+            "activity": "run_nb_silver_products",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          },
+          {
+            "activity": "run_nb_silver_customers",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          },
+          {
+            "activity": "run_nb_silver_returns",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "SqlServerStoredProcedure",
+        "typeProperties": {
+          "storedProcedureName": "gold.usp_Load_DimStore"
+        },
+        "linkedService": {
+          "name": "RetailDemo_Warehouse",
+          "properties": {
+            "type": "DataWarehouse",
+            "typeProperties": {
+              "artifactId": "6f1f6554-4d9c-ada0-433c-73455745b65d",
+              "endpoint": "tuksaiygj4tunec3lfrsezppjq-7bwxheoawaye5kumzfsofchjf4.datawarehouse.fabric.microsoft.com",
+              "workspaceId": "00000000-0000-0000-0000-000000000000"
+            },
+            "annotations": []
+          }
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "exec_usp_Load_DimStore",
+        "dependsOn": [
+          {
+            "activity": "run_nb_silver_returns",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          },
+          {
+            "activity": "run_nb_silver_orders",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          },
+          {
+            "activity": "run_nb_silver_stores",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          },
+          {
+            "activity": "run_nb_silver_products",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          },
+          {
+            "activity": "run_nb_silver_customers",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "SqlServerStoredProcedure",
+        "typeProperties": {
+          "storedProcedureName": "gold.usp_Load_FactSales"
+        },
+        "linkedService": {
+          "name": "RetailDemo_Warehouse",
+          "properties": {
+            "type": "DataWarehouse",
+            "typeProperties": {
+              "artifactId": "6f1f6554-4d9c-ada0-433c-73455745b65d",
+              "endpoint": "tuksaiygj4tunec3lfrsezppjq-7bwxheoawaye5kumzfsofchjf4.datawarehouse.fabric.microsoft.com",
+              "workspaceId": "00000000-0000-0000-0000-000000000000"
+            },
+            "annotations": []
+          }
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "exec_usp_Load_FactSales",
+        "dependsOn": [
+          {
+            "activity": "exec_usp_Load_DimCustomer",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          },
+          {
+            "activity": "exec_usp_Load_DimProduct",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          },
+          {
+            "activity": "exec_usp_Load_DimStore",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
