@@ -8,15 +8,14 @@
 -- =============================================================================
 
 CREATE TABLE gold.FactSales (
-    SalesSK         BIGINT          NOT NULL    IDENTITY,
     OrderBK         INT             NOT NULL,
-    CustomerSK      INT             NOT NULL,
-    ProductSK       INT             NOT NULL,
-    StoreSK         INT             NOT NULL,
+    CustomerSK      BIGINT          NOT NULL,
+    ProductSK       BIGINT          NOT NULL,
+    StoreSK         BIGINT          NOT NULL,
     OrderDateKey    INT             NOT NULL,
     Quantity        INT             NOT NULL,
     UnitPrice       DECIMAL(10, 2)  NOT NULL,
     TotalAmount     DECIMAL(12, 2)  NOT NULL,
     Status          VARCHAR(20)     NOT NULL,
-    _LoadTimestamp  DATETIME2(6)    NOT NULL
+    _LoadTimestamp  DATETIME2(6)       NOT NULL
 );
