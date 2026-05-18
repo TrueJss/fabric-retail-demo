@@ -7,25 +7,16 @@
 CREATE TABLE gold.DimDate (
     DateKey         INT             NOT NULL,
     FullDate        DATE            NOT NULL,
-    DayOfWeek       TINYINT         NOT NULL,
+    DayOfWeek       INT             NOT NULL,
     DayName         VARCHAR(10)     NOT NULL,
-    DayOfMonth      TINYINT         NOT NULL,
-    DayOfYear       SMALLINT        NOT NULL,
-    WeekOfYear      TINYINT         NOT NULL,
-    MonthNumber     TINYINT         NOT NULL,
+    DayOfMonth      INT             NOT NULL,
+    DayOfYear       INT             NOT NULL,
+    WeekOfYear      INT             NOT NULL,
+    MonthNumber     INT             NOT NULL,
     MonthName       VARCHAR(10)     NOT NULL,
     MonthShort      CHAR(3)         NOT NULL,
-    Quarter         TINYINT         NOT NULL,
+    Quarter         INT             NOT NULL,
     QuarterName     VARCHAR(6)      NOT NULL,
-    YearNumber      SMALLINT        NOT NULL,
+    YearNumber      INT             NOT NULL,
     IsWeekend       BIT             NOT NULL
 );
-
-CREATE UNIQUE INDEX IX_DimDate_PK
-    ON gold.DimDate (DateKey);
-
-CREATE INDEX IX_DimDate_FullDate
-    ON gold.DimDate (FullDate);
-
-CREATE INDEX IX_DimDate_YearMonth
-    ON gold.DimDate (YearNumber, MonthNumber, DateKey);
