@@ -7,7 +7,7 @@
 -- =============================================================================
  
 CREATE TABLE gold.DimCustomer (
-    CustomerSK          INT             NOT NULL    IDENTITY,
+    CustomerSK          BIGINT          NOT NULL    IDENTITY,
     CustomerBK          INT             NOT NULL,
     FirstName           VARCHAR(100)    NOT NULL,
     LastName            VARCHAR(100)    NOT NULL,
@@ -19,5 +19,5 @@ CREATE TABLE gold.DimCustomer (
     AddressState        CHAR(2)         NULL,
     Region              VARCHAR(50)     NOT NULL,
     RegistrationDate    DATE            NULL,
-    _LoadTimestamp      DATETIME2       NOT NULL
+    _LoadTimestamp      DATETIME2(6)       NOT NULL
 );
