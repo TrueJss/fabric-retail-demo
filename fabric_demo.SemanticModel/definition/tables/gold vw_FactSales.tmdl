@@ -1,0 +1,253 @@
+table 'gold vw_FactSales'
+	lineageTag: 53cfc089-c3dd-4548-9022-6b0316500318
+
+	measure 'Total Revenue' = SUM('gold vw_FactSales'[TotalAmount])
+		formatString: $#,##0.00
+		displayFolder: Revenue
+		lineageTag: b60b1a2f-0194-4c3d-8b30-e203f496bcfb
+
+	measure 'Completed Revenue' = CALCULATE([Total Revenue], 'gold vw_FactSales'[OrderStatus] = "completed")
+		formatString: $#,##0.00
+		displayFolder: Revenue
+		lineageTag: fd687c88-511e-4105-8689-7daa751601b1
+
+	measure 'Avg Order Value' = DIVIDE([Total Revenue], [Total Orders], 0)
+		formatString: $#,##0.00
+		displayFolder: Revenue
+		lineageTag: b9320d0a-449a-4e90-bd6f-c2c6df85e9d2
+
+	measure 'Total Orders' = DISTINCTCOUNT('gold vw_FactSales'[OrderID])
+		formatString: 0.00
+		displayFolder: Orders
+		lineageTag: b0c1fd59-5045-4882-95e7-4cebbded631d
+
+	measure 'Completed Orders' = CALCULATE([Total Orders], 'gold vw_FactSales'[OrderStatus] = "completed")
+		formatString: #,##0
+		displayFolder: Orders
+		lineageTag: e81cfe9a-80c5-4a44-a813-4f5d669adaf8
+
+	measure 'Completion Rate %' = DIVIDE([Completed Orders], [Total Orders], 0)
+		formatString: 0.0%
+		displayFolder: Orders
+		lineageTag: 24cce295-3353-469f-a8ba-63a94609577f
+
+	measure 'Units Sold' = SUM('gold vw_FactSales'[Quantity])
+		formatString: #,##0
+		displayFolder: Orders
+		lineageTag: f319d278-59db-4c58-9c2f-1853be8ba94a
+
+	measure 'YTD Revenue' = CALCULATE([Total Revenue], DATESYTD('gold vw_DimDate'[FullDate]))
+		formatString: $#,##0.00
+		displayFolder: Time Intelligence
+		lineageTag: 1004eccc-6e80-4a8b-9262-fa425e5eab3a
+
+	measure 'Revenue PY' = CALCULATE([Total Revenue], DATEADD('gold vw_DimDate'[FullDate], -1, YEAR))
+		formatString: $#,##0.00
+		displayFolder: Time Intelligence
+		lineageTag: 7ad2817d-f2e3-40b3-ba03-aa10239358e9
+
+	measure 'Revenue YoY %' =
+			VAR CurrentRevenue = [Total Revenue]
+			VAR PreviousRevenue = [Revenue PY]
+			RETURN DIVIDE(CurrentRevenue - PreviousRevenue, PreviousRevenue, 0)
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Time Intelligence
+		lineageTag: a6d04826-b754-4cd8-ae77-22c6da3554e6
+
+	measure 'Revenue MoM %' =
+			VAR CurrentRevenue = [Total Revenue]
+			VAR PreviousRevenue =
+				CALCULATE(
+					[Total Revenue],
+					DATEADD('gold vw_DimDate'[FullDate], -1, MONTH)
+				)
+			RETURN DIVIDE(CurrentRevenue - PreviousRevenue, PreviousRevenue, 0)
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Time Intelligence
+		lineageTag: 75dd06ed-9d0e-4b9e-b7db-4339b6d925dd
+
+	measure AOV = DIVIDE([Total Revenue], [Total Orders])
+		lineageTag: 6b4bf78c-e0dc-43bf-97a6-4953abef834e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Return Rate' =
+			DIVIDE(
+			    CALCULATE(
+			        DISTINCTCOUNT('gold vw_FactSales'[OrderID]),
+			        'gold vw_FactSales'[OrderStatus] = "Returned"
+			    ),
+			    DISTINCTCOUNT('gold vw_FactSales'[OrderID])
+			)
+		lineageTag: 476f483f-7689-4fd1-b94c-343886327531
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Orders PY' = CALCULATE([Total Orders], SAMEPERIODLASTYEAR('gold vw_DimDate'[FullDate]))
+		formatString: 0
+		lineageTag: d0cc8f9b-ab5f-4168-9c30-6338f71cb11d
+
+	measure 'Orders YoY %' = DIVIDE([Total Orders] - [Orders PY], [Orders PY])
+		lineageTag: fe9941f4-9774-4acf-abe3-3f67d1e45f18
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'AOV PY' = CALCULATE([AOV], SAMEPERIODLASTYEAR('gold vw_DimDate'[FullDate]))
+		lineageTag: b810682c-070d-492d-986c-18950336d5e6
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'AOV YoY %' = DIVIDE([AOV] - [AOV PY], [AOV PY])
+		lineageTag: bca21118-e224-4590-80f8-45977fcb0708
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Return Rate PY' = CALCULATE([Return Rate], SAMEPERIODLASTYEAR('gold vw_DimDate'[FullDate]))
+		formatString: 0
+		lineageTag: 3136a2a2-a7fb-4067-a486-789678812cb8
+
+	measure 'Return Rate YoY pp' = [Return Rate] - [Return Rate PY]
+		formatString: 0
+		lineageTag: 79decf72-7804-46de-80c5-7c9dbe904886
+
+	measure 'Donut Subtitle' =
+			"Revenue share · " &
+			SELECTEDVALUE('gold vw_DimDate'[YearNumber], "All years")
+		lineageTag: d578ec2d-36bc-40b6-8695-9e22aa9ca660
+
+	measure 'Top5 Products Subtitle' =
+			"By revenue · " &
+			SELECTEDVALUE('gold vw_DimDate'[YearNumber], "All years")
+		lineageTag: 228634c4-59e9-4a28-8f1c-4a883494b09d
+
+	measure 'Completion Rate PY' = ```
+			
+			    CALCULATE(
+			        [Completion Rate %],
+			        SAMEPERIODLASTYEAR('gold vw_DimDate'[FullDate])
+			    )
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 4062537b-28fa-476f-8c14-c1d2cde15aaf
+
+	measure 'Completion Rate YoY pp' = ```
+			
+			    [Completion Rate %] - [Completion Rate PY]
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 833aceee-43b7-4672-9740-2db7b6b91c2a
+
+	measure 'Last Refreshed' =
+			
+			"Last refreshed: " &
+			FORMAT(NOW(), "DD MMM YYYY, HH:MM") &
+			" · Microsoft Fabric Gold layer"
+		lineageTag: 9df3b348-cbe5-426a-881c-21ecc33a43f1
+
+	column OrderID
+		dataType: int64
+		formatString: 0
+		lineageTag: e5efeb01-c065-4685-b388-7de4b3c16e4e
+		summarizeBy: count
+		sourceColumn: OrderID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerSK
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: c6108263-d015-45b4-af97-129c45dfce4e
+		summarizeBy: none
+		sourceColumn: CustomerSK
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductSK
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: f7b11651-fb01-4514-84dc-2f501462dbbb
+		summarizeBy: none
+		sourceColumn: ProductSK
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column StoreSK
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: bba4e568-e738-4b82-ae8b-07b0de87671a
+		summarizeBy: none
+		sourceColumn: StoreSK
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column OrderDateKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 7acb24e5-6289-4f55-a419-0eb2d72e8c2b
+		summarizeBy: none
+		sourceColumn: OrderDateKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quantity
+		dataType: int64
+		formatString: 0
+		lineageTag: a19366e7-7782-4953-a9c7-71019291aee4
+		summarizeBy: sum
+		sourceColumn: Quantity
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	column UnitPrice
+		dataType: double
+		lineageTag: a38b5d12-a476-43ce-8804-730d5f3fe877
+		summarizeBy: sum
+		sourceColumn: UnitPrice
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column TotalAmount
+		dataType: double
+		lineageTag: 44d8abaf-9c14-47a1-9ffa-c1179010122c
+		summarizeBy: sum
+		sourceColumn: TotalAmount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column OrderStatus
+		dataType: string
+		lineageTag: c76db391-e9a6-4e63-a8b3-86739a3e4cd7
+		summarizeBy: none
+		sourceColumn: OrderStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'gold vw_FactSales' = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("tuksaiygj4tunec3lfrsezppjq-7bwxheoawaye5kumzfsofchjf4.datawarehouse.fabric.microsoft.com", "RetailDemo_Warehouse"),
+				    gold_vw_FactSales = Source{[Schema="gold",Item="vw_FactSales"]}[Data]
+				in
+				    gold_vw_FactSales
+
+	annotation PBI_ResultType = Table
+

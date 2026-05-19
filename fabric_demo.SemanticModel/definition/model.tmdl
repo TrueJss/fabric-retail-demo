@@ -1,0 +1,28 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-001
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_QueryOrder = ["gold vw_DimCustomer","gold vw_DimDate","gold vw_DimProduct","gold vw_DimStore","gold vw_FactSales","gold vw_UserRegionMapping"]
+
+annotation PBI_ProTooling = ["TMDLView_Desktop"]
+
+ref table 'gold vw_DimCustomer'
+ref table DateTableTemplate_bea6e34c-1b98-40c1-aa6c-0e60b972fc0f
+ref table LocalDateTable_bd21aace-1038-4957-9357-15a7df771a84
+ref table 'gold vw_DimDate'
+ref table 'gold vw_DimProduct'
+ref table 'gold vw_DimStore'
+ref table LocalDateTable_ae319939-43e5-40a4-961a-4eca55dd64aa
+ref table 'gold vw_FactSales'
+ref table 'gold vw_UserRegionMapping'
+
+ref role 'Regional Sales Manager'
+
+ref cultureInfo en-US
+

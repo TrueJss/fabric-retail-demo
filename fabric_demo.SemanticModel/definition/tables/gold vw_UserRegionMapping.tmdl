@@ -1,0 +1,39 @@
+table 'gold vw_UserRegionMapping'
+	isHidden
+	lineageTag: 6b64544b-d665-4228-8c7e-54017382b380
+
+	column UserEmail
+		dataType: string
+		isHidden
+		lineageTag: 1f45077e-5414-4ab4-ac1a-0716450327fa
+		summarizeBy: none
+		sourceColumn: UserEmail
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Region
+		dataType: string
+		isHidden
+		lineageTag: b6b668c6-8ce0-4152-9adb-52db2b9ec8b0
+		summarizeBy: none
+		sourceColumn: Region
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'gold vw_UserRegionMapping' = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("tuksaiygj4tunec3lfrsezppjq-7bwxheoawaye5kumzfsofchjf4.datawarehouse.fabric.microsoft.com", "RetailDemo_Warehouse"),
+				    gold_vw_UserRegionMapping = Source{[Schema="gold",Item="vw_UserRegionMapping"]}[Data]
+				in
+				    gold_vw_UserRegionMapping
+
+	changedProperty = IsHidden
+
+	annotation PBI_ResultType = Table
+
