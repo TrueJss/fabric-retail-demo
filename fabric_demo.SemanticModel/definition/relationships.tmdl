@@ -1,0 +1,26 @@
+relationship 012b2da4-6ddf-4757-95bb-863fd052aca6
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'gold vw_DimCustomer'.RegistrationDate
+	toColumn: LocalDateTable_bd21aace-1038-4957-9357-15a7df771a84.Date
+
+relationship 968a6c9e-d0ab-4c09-96a6-b6f1f85d515a
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'gold vw_DimStore'.OpenDate
+	toColumn: LocalDateTable_ae319939-43e5-40a4-961a-4eca55dd64aa.Date
+
+relationship AutoDetected_b475e9ff-6d3b-4906-84a4-00b09b847dca
+	fromColumn: 'gold vw_FactSales'.CustomerSK
+	toColumn: 'gold vw_DimCustomer'.CustomerSK
+
+relationship AutoDetected_088c5998-0fee-4a01-a907-a765463cbe13
+	fromColumn: 'gold vw_FactSales'.ProductSK
+	toColumn: 'gold vw_DimProduct'.ProductSK
+
+relationship AutoDetected_601cefe5-770b-411b-8efb-5098a2712bc7
+	fromColumn: 'gold vw_FactSales'.StoreSK
+	toColumn: 'gold vw_DimStore'.StoreSK
+
+relationship 9452a06f-f17d-f54f-105d-cf74fafcdb61
+	fromColumn: 'gold vw_FactSales'.OrderDateKey
+	toColumn: 'gold vw_DimDate'.DateKey
+

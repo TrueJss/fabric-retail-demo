@@ -1,0 +1,91 @@
+table 'gold vw_DimStore'
+	lineageTag: 6d5e6c57-ff46-4841-b0af-f34732607b93
+
+	column StoreSK
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 0472c82e-459f-4258-ae5c-95f5fae33599
+		summarizeBy: none
+		sourceColumn: StoreSK
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column StoreID
+		dataType: int64
+		formatString: 0
+		lineageTag: cb3ab10a-7632-406c-bb45-76f0c6248496
+		summarizeBy: count
+		sourceColumn: StoreID
+
+		annotation SummarizationSetBy = Automatic
+
+	column StoreName
+		dataType: string
+		lineageTag: bed34703-7ff1-4d97-9b44-b39f95fe8e6d
+		summarizeBy: none
+		sourceColumn: StoreName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Region
+		dataType: string
+		lineageTag: 38499555-da60-4bd4-9828-faca8c4e8468
+		summarizeBy: none
+		sourceColumn: Region
+
+		annotation SummarizationSetBy = Automatic
+
+	column City
+		dataType: string
+		lineageTag: 6e66e7ae-f82c-4278-a4d4-87254db81bfb
+		summarizeBy: none
+		sourceColumn: City
+
+		annotation SummarizationSetBy = Automatic
+
+	column State
+		dataType: string
+		lineageTag: faf43089-bbc3-41be-8be7-a4075b2026ca
+		summarizeBy: none
+		sourceColumn: State
+
+		annotation SummarizationSetBy = Automatic
+
+	column Manager
+		dataType: string
+		lineageTag: 56052b60-d985-4847-9ea7-a22d0ada2c7e
+		summarizeBy: none
+		sourceColumn: Manager
+
+		annotation SummarizationSetBy = Automatic
+
+	column OpenDate
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 6bf5f400-a367-48f8-a1c8-566fe4ec3a55
+		summarizeBy: none
+		sourceColumn: OpenDate
+
+		variation Variation
+			isDefault
+			relationship: 968a6c9e-d0ab-4c09-96a6-b6f1f85d515a
+			defaultHierarchy: LocalDateTable_ae319939-43e5-40a4-961a-4eca55dd64aa.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition 'gold vw_DimStore' = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("tuksaiygj4tunec3lfrsezppjq-7bwxheoawaye5kumzfsofchjf4.datawarehouse.fabric.microsoft.com", "RetailDemo_Warehouse"),
+				    gold_vw_DimStore = Source{[Schema="gold",Item="vw_DimStore"]}[Data]
+				in
+				    gold_vw_DimStore
+
+	annotation PBI_ResultType = Table
+

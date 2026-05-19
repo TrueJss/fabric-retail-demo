@@ -1,0 +1,101 @@
+table 'gold vw_DimProduct'
+	lineageTag: 75ffa48a-6046-40ba-a49f-7379abd45384
+
+	column ProductSK
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 9010a98e-ab76-4701-9093-2056d7271ac7
+		summarizeBy: none
+		sourceColumn: ProductSK
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductID
+		dataType: int64
+		formatString: 0
+		lineageTag: f6f43a42-3eb0-485e-b6e0-156ad9080595
+		summarizeBy: none
+		sourceColumn: ProductID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CategoryID
+		dataType: int64
+		formatString: 0
+		lineageTag: f43cc4af-3f09-4ffd-aabb-9079be3c53f8
+		summarizeBy: none
+		sourceColumn: CategoryID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CategoryName
+		dataType: string
+		lineageTag: c097ba1c-01c7-4b33-82d4-7e1256a4d9f9
+		summarizeBy: none
+		sourceColumn: CategoryName
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductName
+		dataType: string
+		lineageTag: 7c32ab85-4365-4a83-9998-6b10460e7922
+		summarizeBy: none
+		sourceColumn: ProductName
+
+		annotation SummarizationSetBy = Automatic
+
+	column CostPrice
+		dataType: double
+		lineageTag: 0859c3fc-6655-479e-8ff4-726bfed75e66
+		summarizeBy: none
+		sourceColumn: CostPrice
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column RetailPrice
+		dataType: double
+		lineageTag: 0546c1ac-41d3-4591-9883-5f733290517d
+		summarizeBy: none
+		sourceColumn: RetailPrice
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column MarginPct
+		dataType: double
+		lineageTag: 873f48c4-4964-47c3-af8e-3514e55f079d
+		summarizeBy: none
+		sourceColumn: MarginPct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	hierarchy 'Product Hierarchy'
+		lineageTag: 4d3fa261-69f7-493f-9676-ce9ea61ff37f
+
+		level Category
+			lineageTag: fee5a91a-95df-45fb-b1ba-4161c7cc1152
+			column: CategoryName
+
+		level Product
+			lineageTag: bef77622-081c-403b-8ae4-d66e166921a2
+			column: ProductName
+
+	partition 'gold vw_DimProduct' = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("tuksaiygj4tunec3lfrsezppjq-7bwxheoawaye5kumzfsofchjf4.datawarehouse.fabric.microsoft.com", "RetailDemo_Warehouse"),
+				    gold_vw_DimProduct = Source{[Schema="gold",Item="vw_DimProduct"]}[Data]
+				in
+				    gold_vw_DimProduct
+
+	annotation PBI_ResultType = Table
+

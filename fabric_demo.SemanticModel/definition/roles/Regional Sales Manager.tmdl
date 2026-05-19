@@ -1,0 +1,12 @@
+role 'Regional Sales Manager'
+	modelPermission: read
+
+	tablePermission 'gold vw_DimStore' =
+			[Region] IN
+			    CALCULATETABLE(
+			        VALUES('gold vw_UserRegionMapping'[Region]),
+			        'gold vw_UserRegionMapping'[UserEmail] = USERPRINCIPALNAME()
+			    )
+
+	annotation PBI_Id = 56b0baadec6040bf9b45a124b4ec5309
+

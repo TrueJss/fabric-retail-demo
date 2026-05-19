@@ -1,0 +1,162 @@
+table 'gold vw_DimDate'
+	lineageTag: 1b710d6b-b234-4619-a796-7b844f0670e4
+	dataCategory: Time
+
+	column DateKey
+		dataType: int64
+		formatString: 0
+		lineageTag: e2d3aa76-aec0-47d7-9320-26b39e7e1e02
+		summarizeBy: none
+		sourceColumn: DateKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column FullDate
+		dataType: dateTime
+		isKey
+		formatString: Long Date
+		lineageTag: 062b4359-babf-4593-a185-a10bd976e2f1
+		summarizeBy: none
+		sourceColumn: FullDate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column DayOfWeek
+		dataType: int64
+		formatString: 0
+		lineageTag: 2debf8a1-9360-48c6-93f3-3cbcba3ba9a5
+		summarizeBy: sum
+		sourceColumn: DayOfWeek
+
+		annotation SummarizationSetBy = Automatic
+
+	column DayName
+		dataType: string
+		lineageTag: c9d0116f-8ee7-4b90-b703-4aad56b16045
+		summarizeBy: none
+		sourceColumn: DayName
+
+		annotation SummarizationSetBy = Automatic
+
+	column DayOfMonth
+		dataType: int64
+		formatString: 0
+		lineageTag: 8e35d49d-a3df-4709-afe0-b7475c86b2fb
+		summarizeBy: sum
+		sourceColumn: DayOfMonth
+
+		annotation SummarizationSetBy = Automatic
+
+	column DayOfYear
+		dataType: int64
+		formatString: 0
+		lineageTag: 30f295c0-1c81-431b-a356-bb198d37de77
+		summarizeBy: sum
+		sourceColumn: DayOfYear
+
+		annotation SummarizationSetBy = Automatic
+
+	column WeekOfYear
+		dataType: int64
+		formatString: 0
+		lineageTag: 75083237-94eb-4582-a46e-74be476dbf4b
+		summarizeBy: sum
+		sourceColumn: WeekOfYear
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthNumber
+		dataType: int64
+		formatString: 0
+		lineageTag: e5544b71-8e47-4bae-a8d8-f1ac5da867f3
+		summarizeBy: sum
+		sourceColumn: MonthNumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthName
+		dataType: string
+		lineageTag: bfca1b2c-8227-4bac-85c4-d6724b5e5389
+		summarizeBy: none
+		sourceColumn: MonthName
+		sortByColumn: MonthNumber
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthShort
+		dataType: string
+		lineageTag: ec588e37-7a76-4e4c-af0a-b95fcca1dffc
+		summarizeBy: none
+		sourceColumn: MonthShort
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quarter
+		dataType: int64
+		formatString: 0
+		lineageTag: 3ca7f7a7-43c0-48fd-8229-ffe05181e4fe
+		summarizeBy: sum
+		sourceColumn: Quarter
+
+		annotation SummarizationSetBy = Automatic
+
+	column QuarterName
+		dataType: string
+		lineageTag: 7fbef222-3df3-4a50-a1bf-ad4cd9a8df98
+		summarizeBy: none
+		sourceColumn: QuarterName
+
+		annotation SummarizationSetBy = Automatic
+
+	column YearNumber
+		dataType: int64
+		formatString: 0
+		lineageTag: 7636e2dd-0468-407f-8847-c1b339f33138
+		summarizeBy: sum
+		sourceColumn: YearNumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsWeekend
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: a3844c45-4c52-4eab-90e5-c14a23544a08
+		summarizeBy: none
+		sourceColumn: IsWeekend
+
+		annotation SummarizationSetBy = Automatic
+
+	hierarchy 'Date Hierarchy'
+		lineageTag: fbbd6463-ee18-4671-8a1b-d7afe4a5a0dc
+
+		level Year
+			lineageTag: 09e015e9-1ebc-4dae-a4ee-10fcdfd6ba47
+			column: YearNumber
+
+		level Quarter
+			lineageTag: dc9388a8-c6c1-41b5-bca2-dd01aec6f600
+			column: QuarterName
+
+		level Month
+			lineageTag: a2f354d7-833d-41f1-8d2f-653efae37825
+			column: MonthName
+
+		level Day
+			lineageTag: a8c89a8e-893d-437c-8322-a5b294b4a674
+			column: FullDate
+
+	partition 'gold vw_DimDate' = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("tuksaiygj4tunec3lfrsezppjq-7bwxheoawaye5kumzfsofchjf4.datawarehouse.fabric.microsoft.com", "RetailDemo_Warehouse"),
+				    gold_vw_DimDate = Source{[Schema="gold",Item="vw_DimDate"]}[Data]
+				in
+				    gold_vw_DimDate
+
+	annotation PBI_ResultType = Table
+

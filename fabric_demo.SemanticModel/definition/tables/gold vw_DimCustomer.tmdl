@@ -1,0 +1,123 @@
+table 'gold vw_DimCustomer'
+	lineageTag: 9510da3e-aed7-4116-b91b-edf905af539e
+
+	column CustomerSK
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: a48820bf-2093-4808-bc18-940f7ca13b77
+		summarizeBy: none
+		sourceColumn: CustomerSK
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerID
+		dataType: int64
+		formatString: 0
+		lineageTag: e6df397e-ef53-462f-a603-48a22b2c1552
+		summarizeBy: count
+		sourceColumn: CustomerID
+
+		annotation SummarizationSetBy = Automatic
+
+	column FirstName
+		dataType: string
+		lineageTag: b2573b9f-a179-42aa-96fa-f65e6ead69e4
+		summarizeBy: none
+		sourceColumn: FirstName
+
+		annotation SummarizationSetBy = Automatic
+
+	column LastName
+		dataType: string
+		lineageTag: 8117c596-45bf-48fe-8540-bde2b6172579
+		summarizeBy: none
+		sourceColumn: LastName
+
+		annotation SummarizationSetBy = Automatic
+
+	column FullName
+		dataType: string
+		lineageTag: 755187c2-b51a-49f5-bc8e-5c4fe580703d
+		summarizeBy: none
+		sourceColumn: FullName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Email
+		dataType: string
+		lineageTag: b67a96db-79e5-4c78-9461-870ced742473
+		summarizeBy: none
+		sourceColumn: Email
+
+		annotation SummarizationSetBy = Automatic
+
+	column Phone
+		dataType: string
+		lineageTag: 2330b0dd-08bf-498f-91bb-b5d095356fbf
+		summarizeBy: none
+		sourceColumn: Phone
+
+		annotation SummarizationSetBy = Automatic
+
+	column AddressStreet
+		dataType: string
+		lineageTag: 40929d21-7ab1-4973-97e1-8325f035a1cf
+		summarizeBy: none
+		sourceColumn: AddressStreet
+
+		annotation SummarizationSetBy = Automatic
+
+	column AddressCity
+		dataType: string
+		lineageTag: e48c9433-311b-44a1-acc7-effc27369ee7
+		summarizeBy: none
+		sourceColumn: AddressCity
+
+		annotation SummarizationSetBy = Automatic
+
+	column AddressState
+		dataType: string
+		lineageTag: 4af01b5e-8340-428a-ae98-3d9718b910e4
+		summarizeBy: none
+		sourceColumn: AddressState
+
+		annotation SummarizationSetBy = Automatic
+
+	column Region
+		dataType: string
+		lineageTag: e72922a9-4be5-4997-9273-3512c2d96c3d
+		summarizeBy: none
+		sourceColumn: Region
+
+		annotation SummarizationSetBy = Automatic
+
+	column RegistrationDate
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 1234c268-30cb-4e9c-8094-239fd29c00fa
+		summarizeBy: none
+		sourceColumn: RegistrationDate
+
+		variation Variation
+			isDefault
+			relationship: 012b2da4-6ddf-4757-95bb-863fd052aca6
+			defaultHierarchy: LocalDateTable_bd21aace-1038-4957-9357-15a7df771a84.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition 'gold vw_DimCustomer' = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("tuksaiygj4tunec3lfrsezppjq-7bwxheoawaye5kumzfsofchjf4.datawarehouse.fabric.microsoft.com", "RetailDemo_Warehouse"),
+				    gold_vw_DimCustomer = Source{[Schema="gold",Item="vw_DimCustomer"]}[Data]
+				in
+				    gold_vw_DimCustomer
+
+	annotation PBI_ResultType = Table
+
